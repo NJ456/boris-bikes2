@@ -15,3 +15,11 @@ describe DockingStation do
     expect(bike.working?).to eq(true)
   end
 end
+
+describe DockingStation do
+  it "docking station allows us to dock a bike" do
+  bike = Bike.new
+  subject.dock_bike(bike)
+  expect(subject.bikes.include?(bike)).to eq (true)
+ end
+end
