@@ -1,1 +1,1 @@
-Makers project - Practice TDD
+Makers project - Practice TDD and pairing
