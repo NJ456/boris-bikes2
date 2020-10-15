@@ -41,11 +41,11 @@ class DockingStation
 
 
   private
-    def full?
-     @collection.bikes.length == @collection.capacity
-   end
+  def full?
+    @collection.bikes.length == @collection.capacity
+  end
 
-   def empty?
-     @collection.bikes.empty?
-   end
- end
+  def empty?
+    @collection.bikes.empty?
+  end
+end
