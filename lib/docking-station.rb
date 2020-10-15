@@ -12,17 +12,18 @@ class DockingStation
 #If statement checks if dock is full, if full docks a bike if not
 #raises an error
   def dock_bike(bike)
-    if !full?
-     @collection.bikes << bike
-    else
-     raise "dock is full"
-    end
+    raise "dock is full" if full? 
     puts "Is this bike broken y/n"
     input = gets.chomp
     case input.upcase
     when "Y"
-      @collection.bikes.last.broken
-    end 
+      bike.broken
+    end
+    if bike.working?
+      @collection.bikes << bike
+    else
+      @collection.broken_bikes << bike
+    end
   end
 
 #Releases a bike
@@ -39,29 +40,22 @@ class DockingStation
 
   private
     def full?
-     if @collection.bikes.length == @collection.capacity
-       return true
-     else
-       return false
-     end
+     @collection.bikes.length == @collection.capacity
    end
 
    def empty?
-     if @collection.bikes.empty?
-       return true
-     else
-       return false
-     end
+     @collection.bikes.empty?
    end
  end
 
 class Collection
   attr_reader :capacity
-  attr_accessor :bikes
+  attr_accessor :bikes, :broken_bikes
   #What happens when a new collection is made, sets the bikes to an empty array
   #and sets capacity to 20
   def initialize(capacity)
     @bikes = []
+    @broken_bikes = []
     @capacity = capacity
   end
 end

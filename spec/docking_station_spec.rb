@@ -1,27 +1,37 @@
 require 'docking-station'
 
 RSpec.describe DockingStation do
+  before(:each) do
+    allow(subject).to receive(:gets).and_return("N")
+  end
+
+  let(:bike) { double(:working? => true, :broken => nil) }
+
   it {should respond_to(:release_bike)}
 
 
   describe "release_bike" do
     it "Expects Bike released to be working" do
-      allow(subject).to receive(:puts).and_return(nil)
-      allow(subject).to receive(:gets).and_return("N")
-      subject.dock_bike(Bike.new)
+      subject.dock_bike(bike)
       bike = subject.release_bike
       expect(bike.working?).to eq(true)
-
     end
-    it "Returns a Bike object when release_bike is called" do
-      subject.dock_bike(Bike.new)
-      expect(subject.release_bike).to be_instance_of(Bike)
+
+    it "Returns an object from the bike array when release_bike is called" do
+      subject.dock_bike(bike)
+      expect(subject.release_bike).to eq(bike)
     end
 
     it "raises error if dock is empty" do
       expect{subject.release_bike}.to raise_error("dock is empty")
     end
 
+    it "won't release a broken bike" do
+      allow(subject).to receive(:gets).and_return("Y")
+      allow(bike).to receive(:working?).and_return(false)
+      subject.dock_bike(bike)
+      expect { subject.release_bike }.to raise_error("dock is empty")
+    end
 
   end
 
@@ -36,24 +46,31 @@ RSpec.describe DockingStation do
   end
 
   describe "dock_bike" do
-    it "raises error if a bike is docked" do
+    it "raises error if a bike is docked while docking station is full" do
       allow(subject).to receive(:puts).and_return(nil)
-      allow(subject).to receive(:gets).and_return("N")
-      20.times{subject.dock_bike(Bike.new)}
-      expect{subject.dock_bike(Bike.new)}.to raise_error("dock is full")
+      20.times{subject.dock_bike(bike)}
+      expect{subject.dock_bike(bike)}.to raise_error("dock is full")
     end
     it "docking station allows us to dock a bike" do
-      bike = Bike.new
       subject.dock_bike(bike)
-      expect(subject.collection.bikes.include?(bike)).to eq (true)
+      expect(subject.collection.bikes.include?(bike)).to eq(true)
     end
     it "allows user to report the bike is broken" do
-      subject.dock_bike(Bike.new)
-      allow(subject).to receive(:puts).and_return(nil)
       allow(subject).to receive(:gets).and_return("Y")
-      expect(subject.collection.bikes.last.working?).to eq false
+      allow(bike).to receive(:working?).and_return(false)
+      subject.dock_bike(bike)
+      expect(subject.collection.broken_bikes.last.working?).to eq(false)
+    end
+    it "adds working bikes to the bikes array" do
+      subject.dock_bike(bike)
+      expect(subject.collection.bikes.include?(bike)).to eq(true)
     end
 
-
+    it "adds broken bikes to the broken_bikes array" do
+      allow(subject).to receive(:gets).and_return("Y")
+      allow(bike).to receive(:working?).and_return(false)
+      subject.dock_bike(bike)
+      expect(subject.collection.broken_bikes.include?(bike)).to eq(true)
+    end
   end
 end
