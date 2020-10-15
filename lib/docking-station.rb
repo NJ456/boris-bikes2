@@ -1,3 +1,5 @@
+require_relative "collection"
+
 class DockingStation
   attr_reader :collection
   #This is what happens when you make a new docking station
@@ -12,7 +14,7 @@ class DockingStation
 #If statement checks if dock is full, if full docks a bike if not
 #raises an error
   def dock_bike(bike)
-    raise "dock is full" if full? 
+    raise "dock is full" if full?
     puts "Is this bike broken y/n"
     input = gets.chomp
     case input.upcase
@@ -47,15 +49,3 @@ class DockingStation
      @collection.bikes.empty?
    end
  end
-
-class Collection
-  attr_reader :capacity
-  attr_accessor :bikes, :broken_bikes
-  #What happens when a new collection is made, sets the bikes to an empty array
-  #and sets capacity to 20
-  def initialize(capacity)
-    @bikes = []
-    @broken_bikes = []
-    @capacity = capacity
-  end
-end
